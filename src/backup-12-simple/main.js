@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import ReactDom from 'react-dom';
 import UserCard from './UserCard';/* ЭТА ФУНКЦИЯ - ДЕСТРУКТУРИРОВАНА (БЕЗ 'PROPS'): */
-import MinMax from './MinMax';
+import Counter from './Counter';
 
 import App from './App';
 
