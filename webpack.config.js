@@ -21,7 +21,21 @@ let conf = {
                 exclude: '/node_modules/'
             },
             {
-                test: /\.css$/,
+                test: /\.module\.css$/, /* кто заканчивается на .module действует принцип модульного css */
+                use: [/* СЕЙЧАС ПРОПИСЫВАЕМ ТОПОРНО, ПОТОМ ИСПРАВИМ */
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules:{
+                                localIdentName: '[local]__[sha1:hash:hex:7]'/* путь до компонента */
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                test: /^((?!\.module).)*css$/, /* для тех кто без .module действует обычное правило */
                 use: [MiniCssExtractPlugin.loader, 'css-loader']
             }
         ]

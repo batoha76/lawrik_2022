@@ -1,37 +1,51 @@
-import React, { useState } from 'react';
-import MinMax from './MinMax';
+import React, {  useState  } from 'react';
+
+import Cart from './Cart';
+import Order from './Order';
+import Result from './Result';
+
+import SettingContext from './contexts/settings';
 
 export default function(){
-    let [ products, setProducts ] = useState(productsStub());
+	//settings
+	let [ settings, setSettings ] = useState({ lang: 'ru', theme: 'light' });
 
-	let setCnt = (id, cnt) => {
-		setProducts(products.map(pr => pr.id != id ? pr :({...pr, cnt})));
-	};
+	//router parody
+	let [ page, setPage ] = useState('cart');
+	let moveToCart = () => setPage('cart');
+	let moveToOrder = () => setPage('order');
+	let moveToResult = () => setPage('result');
 
-    return <div className='some'>
-        <h1>Products list</h1>
-        <table>
-            <tbody>
-                <tr>
-                    <th>#</th>
-                    <th>Title</th>
-                    <th>Price</th>
-                    <th>Cnt</th>
-                    <th>Total</th>
-                </tr>
-                { products.map((pr, i) => (
-                    <tr key={pr.id}>
-                        <td>{ i + 1 }</td>
-                        <td>{ pr.title }</td>
-                        <td>{ pr.price }</td>
-						<td>
-							<MinMax max = {pr.rest} current={pr.cnt} onChange={cnt => setCnt(pr.id, cnt)}/>
-						</td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
-    </div>
+	//products
+	let [ products, setProducts ] = useState(productsStub());
+
+	let setProductCnt = (id, cnt) => {
+		setProducts(products.map(pr => pr.id != id ? pr : ({ ...pr, cnt})));
+	}
+
+	let removeProduct = (id) => {
+		setProducts(products.filter(el => el.id != id));
+	}
+
+    return <SettingContext.Provider value={settings}>
+		<div className='container mt-1'>
+			{ page === 'cart' && 
+				<Cart 
+					onNext={moveToOrder}
+					products={products}
+					onChange={setProductCnt}
+					onRemove={removeProduct}
+					/>
+			}
+			{ page === 'order' && <Order onNext={moveToResult} onPrev={moveToCart}/>}
+			{ page === 'result' && <Result products={products} />}
+			<hr/>
+			<footer>
+				<button type='button' onClick={() => setSettings({ ...settings, lang: 'ru' })}>ru</button>
+				<button type='button' onClick={() => setSettings({ ...settings, lang: 'en' })}>en</button>
+			</footer>
+		</div>
+	</SettingContext.Provider>
 };
 
 function productsStub(){
@@ -67,22 +81,3 @@ function productsStub(){
 		}
 	];
 };
-
-
-
-
-
-
-
-
-/* 
-function fn(i, ev){
-
-}
-
-let elems = document.querySelectorAll('some');
-
-elems.forEach((el, i) => {
-	el.addEventListener('click', e => fn(i,e))
-});
- */
